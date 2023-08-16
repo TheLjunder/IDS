@@ -1,0 +1,1 @@
+#Sustav za otkrivanje upada koji koristi metode strojnog učenja za detekciju
