@@ -5,63 +5,34 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 
-#Dohvaćanje datoteke u kojoj se nalazi trenutna datoteka
+# Dohvaćanje putanje mape u kojoj se nalazi trenutna datoteka.
 from pathlib import Path
 currentPath = Path(__file__).parent.absolute()
+
+# Postavljanje putanje za skup podataka kojim će se trenirati model za detekciju.
 trainingDataPath = Path.joinpath(currentPath, "KDD Cup 1999 Data/kddcup.data_10_percent.gz")
 
+# Postavljanje putanje za skup podataka kojim će se evaluirati uspješnost napravljenog modela za detekciju.
+# TODO
 
-cols ="""duration,
-protocol_type,
-service,
-flag,
-src_bytes,
-dst_bytes,
-land,
-wrong_fragment,
-urgent,
-hot,
-num_failed_logins,
-logged_in,
-num_compromised,
-root_shell,
-su_attempted,
-num_root,
-num_file_creations,
-num_shells,
-num_access_files,
-num_outbound_cmds,
-is_host_login,
-is_guest_login,
-count,
-srv_count,
-serror_rate,
-srv_serror_rate,
-rerror_rate,
-srv_rerror_rate,
-same_srv_rate,
-diff_srv_rate,
-srv_diff_host_rate,
-dst_host_count,
-dst_host_srv_count,
-dst_host_same_srv_rate,
-dst_host_diff_srv_rate,
-dst_host_same_src_port_rate,
-dst_host_srv_diff_host_rate,
-dst_host_serror_rate,
-dst_host_srv_serror_rate,
-dst_host_rerror_rate,
-dst_host_srv_rerror_rate"""
+# Uvoz skupa podataka #
 
-columns =[]
-for c in cols.split(','):
-    if(c.strip()):
-       columns.append(c.strip())
-  
-columns.append('target')
+# Prema dokumentaciji skupa podataka dodajemo nazive stupaca
+# te pridodajemo dodatan naziv stupca koji označava naziv napada.
+columnHeaderNames =['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 
+                    'dst_bytes', 'land', 'wrong_fragment', 'urgent', 'hot', 
+                    'num_failed_logins', 'logged_in', 'num_compromised', 'root_shell', 'su_attempted', 
+                    'num_root', 'num_file_creations', 'num_shells', 'num_access_files', 
+                    'num_outbound_cmds', 'is_host_login', 'is_guest_login', 'count', 'srv_count', 
+                    'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 'same_srv_rate',
+                    'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate', 
+                    'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 
+                    'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate', 'attack_name',]
 
-attacks_types = {
-    'normal': 'normal',
+# Prema dokumentaciji skupa podataka dodjemo nazive napada
+# zajedno s njihovim kategorijama. Postoje 4 glavne kategorije.
+attacksNamesAndCategory = {
+'normal': 'normal',
 'back': 'dos',
 'buffer_overflow': 'u2r',
 'ftp_write': 'r2l',
@@ -86,81 +57,69 @@ attacks_types = {
 'warezmaster': 'r2l',
 }
 
-#Učitavanje početnog seta podataka i dodavanje svojstva koje nedostaje. 
-#U ovome slučaju nedostaje kolona koja se naziva "Attack Type"
-df = pd.read_csv(trainingDataPath, names = columns)
+# Učitavanje početnog skupa podataka za treniranje.
+trainDF = pd.read_csv(trainingDataPath, names = columnHeaderNames)
 
-# Dodaj kolonu naziva "Attack Type" u set podataka
-df['Attack Type'] = df.target.apply(lambda r:attacks_types[r[:-1]])
+# Učitavanje početnog skupa podataka za testiranje.
 
-df.shape
+# Dodavanje stupca koji će označavati kategoriju napada u skup podataka za treniranje.
+trainDF['attack_category'] = trainDF.attack_name.apply(lambda r:attacksNamesAndCategory[r[:-1]])
 
-num_cols = df._get_numeric_data().columns
+trainDF.shape
+
+# traindDF = df.dropna(axis='columns')# drop columns with NaN
   
-cate_cols = list(set(df.columns)-set(num_cols))
-cate_cols.remove('target')
-cate_cols.remove('Attack Type')
+# df = df[[col for col in df if df[col].nunique() > 1]]# keep columns where there are more than 1 unique values
+
+# corr = df.apply(lambda x: x.factorize()[0]).corr()
   
-cate_cols
-
-df = df.dropna(axis='columns')# drop columns with NaN
+# plt.figure(figsize =(15, 12))
   
-df = df[[col for col in df if df[col].nunique() > 1]]# keep columns where there are more than 1 unique values
-
-corr = df.apply(lambda x: x.factorize()[0]).corr()
+# sns.heatmap(corr)
   
-plt.figure(figsize =(15, 12))
-  
-sns.heatmap(corr)
-  
-plt.show()
+# plt.show()
 
-df.drop('num_root',axis = 1,inplace = True)
+# df.drop('num_root',axis = 1,inplace = True)
 
-df.drop('srv_serror_rate',axis = 1,inplace = True)
+# df.drop('srv_serror_rate',axis = 1,inplace = True)
 
-df.drop('srv_rerror_rate',axis = 1, inplace=True)
+# df.drop('srv_rerror_rate',axis = 1, inplace=True)
 
-df.drop('dst_host_srv_serror_rate',axis = 1, inplace=True)
+# df.drop('dst_host_srv_serror_rate',axis = 1, inplace=True)
 
-df.drop('dst_host_serror_rate',axis = 1, inplace=True)
+# df.drop('dst_host_serror_rate',axis = 1, inplace=True)
 
-df.drop('dst_host_rerror_rate',axis = 1, inplace=True)
+# df.drop('dst_host_rerror_rate',axis = 1, inplace=True)
 
-df.drop('dst_host_srv_rerror_rate',axis = 1, inplace=True)
+# df.drop('dst_host_srv_rerror_rate',axis = 1, inplace=True)
 
-df.drop('dst_host_same_srv_rate',axis = 1, inplace=True)
+# df.drop('dst_host_same_srv_rate',axis = 1, inplace=True)
 
-print(df.head())
+print(trainDF.head())
 
-df.shape
+print(trainDF.columns)
 
-df.columns
-
-#protocol_type feature mapping
+# Pretvorimo simboličke pokazatelje u numeričke.
 pmap = {'icmp':0,'tcp':1,'udp':2}
-df['protocol_type'] = df['protocol_type'].map(pmap)
+trainDF['protocol_type'] = trainDF['protocol_type'].map(pmap)
 
-#flag feature mapping
 fmap = {'SF':0,'S0':1,'REJ':2,'RSTR':3,'RSTO':4,'SH':5 ,'S1':6 ,'S2':7,'RSTOS0':8,'S3':9 ,'OTH':10}
-df['flag'] = df['flag'].map(fmap)
+trainDF['flag'] = trainDF['flag'].map(fmap)
 
-df.drop('service',axis = 1,inplace= True)
+trainDF.drop('service',axis = 1,inplace= True)
 
-df.shape
-
-df.dtypes
+trainDF.shape
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score
 
-df = df.drop(['target',], axis=1)
-print(df.shape)
+trainDF = trainDF.drop(['attack_name',], axis=1)
+print(trainDF.shape)
 
 # Target variable and train set
-Y = df[['Attack Type']]
-X = df.drop(['Attack Type',], axis=1)
+Y = trainDF[['attack_category']]
+X = trainDF.drop(['attack_category',], axis=1)
 
 sc = MinMaxScaler()
 X = sc.fit_transform(X)
