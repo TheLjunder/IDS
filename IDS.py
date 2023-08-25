@@ -218,9 +218,9 @@ modelGB = GradientBoostingClassifier(random_state = 0)
 
 # Unos parametara u pojednini model pomoću
 # metode koja ujedno vraća i statističke podatke.
-# useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelGNB, "Gaussian Naive Bayes")
-# useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelDT, "Decission Tree")
-# useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelRF, "Random Forest")
+useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelGNB, "Gaussian Naive Bayes")
+useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelDT, "Decission Tree")
+useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelRF, "Random Forest")
 # useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelSVC, "Support Vector Classifier")
 useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelLR, "Logistic Regression")
 useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelGB, "Gradient Boosting")
