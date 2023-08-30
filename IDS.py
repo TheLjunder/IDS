@@ -194,7 +194,7 @@ print(Fore.YELLOW + "Uklanjam \"Attack name\" simbolički pokazatelj." + Style.R
 trainDF = trainDF.drop(['attack_name',], axis=1)
 testDF = testDF.drop(['attack_name',], axis=1)
 
-# 4. Inicijalizacija ulaznih varijabli skupova podataka
+# 4. Inicijalizacija ulaznih varijabli modela
 
 # Postavljanje varijabla za treniranje i testiranje koje će koristiti model.
 # Varijable sa sufiksom X predstavljaju neoznačeni skup podataka.
@@ -234,7 +234,7 @@ useModel(trainDF_Y, trainDF_X, testDF_Y, testDF_X, modelGB, "Gradient Boosting")
 
 # Finaliziranje i spremanje konačne MS Excel datoteke.
 writer.close()
-print(Fore.YELLOW + "Kreirana je MS Excel datoteka pod nazivom \"" + str(fileName) + "\" u korijenskoj datoteci ovog Python programa." + Style.RESET_ALL)
+print(Fore.YELLOW + "Kreirana je MS Excel datoteka pod nazivom \"" + str(fileName) + "\" u korijenski direktorij ovog programa." + Style.RESET_ALL)
 
 # 8. Iscrtavanje i spremanje grafova pokazatelja uspješnosti pojedinog modela.
 
